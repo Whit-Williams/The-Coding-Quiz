@@ -10,172 +10,112 @@ const quizResult = document.getElementById("end-screen");
 const viewHighScores = document.getElementById("submit");
 const startQuiz = document.getElementById("start");
 const questionsDiv = document.getElementById("questions");
-const feedback = document.getElementById("feedback")
+const feedback = document.getElementById("feedback");
 const question = document.getElementById("question-title");
 const answers = document.getElementById("choices");
 const finalScore = document.getElementById("final-score");
-const answerA = document.createElement("button");
-const answerB = document.createElement("button");
-const answerC = document.createElement("button");
-const answerD = document.createElement("button");
-
-answers.appendChild(answerA);
-answers.appendChild(answerB);
-answers.appendChild(answerC);
-answers.appendChild(answerD);
-
-
-let currentQuestion = 0;
-let score = 0;
-
-function startQuestions () {
-    startQuiz.onclick = quizHomepage.classList.add("hide");
-    questionsDiv.classList.remove("hide");
-    currentQuestion = 0;
-    question.innerHTML = myQuestions[currentQuestion].question;
-    answerA.innerHTML = myQuestions[currentQuestion].answers["a"];
-    answerA.onclick = () => {
-        let option = 0;
-        if(myQuestions[currentQuestion].answers[option]) {
-            if(score < 4) {
-                score++;
-            }
-        } 
-        finalScore.innerHTML = score;
-        if(currentQuestion < 3) {
-            nextQuestion();
-        }
-    }
-answerB.innerHTML = myQuestions[currentQuestion].answers["b"];
-answerB.onclick = () => {
-    let option = 1;
-    if(myQuestions[currentQuestion].answers[option]) {
-        if(score < 4) {
-            score++;
-        }
-    }
-    finalScore.innerHTML = score;
-    if(currentQuestion < 3) {
-        nextQuestion();
-    }
-}
-answerC.innerHTML = myQuestions[currentQuestion].answers["c"];
-answerB.onclick = () => {
-    let option = 2;
-    if(myQuestions[currentQuestion].answers[option]) {
-        if(score < 4) {
-            score++;
-        }
-    }
-    finalScore.innerHTML = score;
-    if(currentQuestion < 3) {
-        nextQuestion();
-    }
-}
-
-answerD.innerHTML = myQuestions[currentQuestion].answers["d"];
-answerB.onclick = () => {
-    let option = 3;
-    if(myQuestions[currentQuestion].answers[option]) {
-        if(score < 4) {
-            score++;
-        }
-    }
-    finalScore.innerHTML = score;
-    if(currentQuestion < 3) {
-        nextQuestion();
-    } 
-}
-
-};
+const timerText = document.getElementById("time");
+const highscoresList = document.getElementById("highscores");
 
 startQuiz.addEventListener("click", startQuestions);
 
-function restart () {
-    currentQuestion = 0;
-    questionsDiv.classList.add("hide");
-    feedback.classList.add("hide");
-    quizResult.classList.add("hide");
-    score = 0;
-    finalScore.innerHTML = score;
-    startQuestions();
+ //take you back to quiz homepage
+
+let currentQuestion = 0;
+let score = localStorage.getItem("score");
+finalScore.textContent = score;
+let seconds = 60;
+let timer;
+
+function startTimer() {
+  timer = setInterval(() => {
+    seconds--;
+    timerText.textContent = seconds;
+    if (seconds == 0) {
+        clearInterval(timer);
+        resultsPage();
+      }
+  }, 1000); 
+};
+ 
+function startQuestions() {
+  startQuiz.onclick = quizHomepage.classList.add("hide");
+  questionsDiv.classList.remove("hide");
+  currentQuestion = 0;
+  displayQuestion();
+  startTimer();
+}
+
+function displayQuestion() {
+  question.innerHTML = myQuestions[currentQuestion].question;
+  answers.innerHTML = "";
+  for (let i = 0; i < 4; i++) {
+    const answerA = document.createElement("button");
+    answerA.setAttribute("class", "option");
+    answerA.innerHTML = myQuestions[currentQuestion].answers[i];
+    answerA.onclick = checkAnswer;
+    answers.appendChild(answerA);
+  }
+
 };
 
-function nextQuestion () {
+function nextQuestion() {
+  if (currentQuestion < myQuestions.length - 1) {
     currentQuestion++;
-    if(currentQuestion > 3) {
-        quizResult.classList.remove("hide");
-        questionsDiv.classList.add("hide");
-        viewHighScores.onclick = window.location.href = "highscores.html";
-    } else startQuestions();
-
+    displayQuestion();
+  } else {
+    quizResult.classList.remove("hide");
+    questionsDiv.classList.add("hide");
+  }
 };
 
-
-
-// shows the first question when clicked
-// startQuiz.addEventListener("click", showQuestion);
-/*startQuiz.onclick = nextQuestion;
-
-// set timer here
-
-// this generates the question options 
-function showQuestion () {
-   const question = document.getElementById("question-title");
-   const answers = document.getElementById("choices");
-
-   question.textContent = myQuestions[0];
-   answers.innerHTML = "";
-
-   for(let i = 0; i < myQuestions.answers.length; i++) {
-    const choicesDiv = document.createElement("div");
-    const choice = document.createElement("input");
-    const choiceLabel = document.createElement("label");
-
-    choice.type = "button";
-    choice.name = "answer";
-    choice.value = i;
-
-    choiceLabel.textContent = myQuestions.answers[i];
-
-    choicesDiv.appendChild(choice);
-    choicesDiv.appendChild(choiceLabel);
-    answers.appendChild(choicesDiv);
-   }
+function resultsPage() {
+  quizResult.classList.remove("hide");
+  questionsDiv.classList.add("hide");
 };
 
-showQuestion();
+function seeHighscores() {
+  // grab initials from input, save to local storage
+  window.location.href = "highscores.html";
 
-function nextQuestion () {
-    if (myQuestions[0] < myQuestions.length - 1) {
-myQuestions[0]++;
-showQuestion();
-    } else {
-        totalScore();
-    }
+  for (let i = 0; i < 4; i++) {
+    const highscore = document.createElement("li");
+    answerA.setAttribute("class", "option");
+    answerA.innerHTML = myQuestions[currentQuestion].answers[i];
+    answerA.onclick = checkAnswer;
+    answers.appendChild(answerA);
+  }
 };
 
+function correctFeedback() {
+  feedback.classList.remove("hide");
+  feedback.innerHTML = "Correct!";
+};
 
-  // this sends you to your final score page
-function totalScore () {
-quizResult
-const scoreValue = document.getElementById("final-score");
-scoreValue.textContent = scoreSum;
-}
+function wrongFeedback() {
+  feedback.classList.remove("hide");
+  feedback.innerHTML = "Wrong!";
+};
 
+function checkAnswer() {
+  const rightAnswer = myQuestions[currentQuestion].correctAnswer;
+  console.log(this);
+  console.log(rightAnswer);
 
+  if (this.textContent === rightAnswer) {
+    correctFeedback();
+    score++;
+    finalScore.textContent = score;
+    localStorage.setItem("score", score);
+  } else {
+    wrongFeedback(); //fix this
+    seconds -= 5;
+  }
+  nextQuestion(); 
+};
 
-// need to save this part to local storage so it updates with each answer 
-let scoreSum = 0;
-
-  // this sends you to the high score page
-function showHighscores() {
-    const highScorePage = window.location.href = "highscores.html";
-viewHighScores.onclick = highScorePage;
-
-}
-
-
-// shows the high scores page when clicked
-viewHighScores.addEventListener("click", showHighscores); */
-
+function restart() {
+  currentQuestion = 0;
+  score = 0; // work out this part 
+};
+//Need something to target the initials field
