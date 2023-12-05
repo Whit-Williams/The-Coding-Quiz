@@ -1,4 +1,4 @@
-# The-Coding-Quiz
+# The Coding Quiz
 
 ## Description
 
@@ -12,7 +12,7 @@ More specifically, the task for this challenge was to build a timed quiz with mu
 
 ![Screenshot image of portfolio page](./assets/images/Coding-Quiz%20Screenshot.png)
 
-#### [You can visit this page by clicking here.](https://whit-williams.github.io/ww-portfolio/)
+#### [You can visit this page by clicking here.](https://whit-williams.github.io/The-Coding-Quiz/)
 
 ### Technologies
 This project is created with:
